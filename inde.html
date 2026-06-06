@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ptite demande</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f0f;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(78, 205, 196, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .container {
+            max-width: 680px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-screen,
+        .step {
+            background: rgba(23, 23, 23, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 50px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .welcome-screen h1 {
+            font-size: 3em;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #7877c6 0%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .welcome-screen p {
+            font-size: 1.15em;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #7877c6 0%, #6b66b3 100%);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 12px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(120, 119, 198, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(120, 119, 198, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .step {
+            display: none;
+            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .step-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 36px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+        .step-header::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #7877c6, #ff6b6b);
+            border-radius: 16px 0 0 16px;
+        }
+
+        .step-title {
+            font-size: 1.6em;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .step-instruction {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1em;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        /* Step 1 - Caesar Cipher */
+        .cipher-text {
+            font-size: 1.25em;
+            letter-spacing: 1px;
+            padding: 28px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            margin: 24px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            word-wrap: break-word;
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            line-height: 1.8;
+        }
+
+        .cipher-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            margin: 40px 0;
+        }
+
+        .cipher-btn {
+            width: 56px;
+            height: 56px;
+            font-size: 1.8em;
+            border-radius: 16px;
+            border: none;
+            background: rgba(120, 119, 198, 0.15);
+            color: #7877c6;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            border: 1px solid rgba(120, 119, 198, 0.3);
+        }
+
+        .cipher-btn:hover {
+            background: rgba(120, 119, 198, 0.25);
+            transform: scale(1.1);
+            border-color: rgba(120, 119, 198, 0.5);
+        }
+
+        .cipher-btn:active {
+            transform: scale(0.95);
+        }
+
+        .cipher-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #7877c6 0%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .check-btn {
+            margin-top: 24px;
+        }
+
+        /* Step 2 - QCM */
+        .question-block {
+            display: none;
+        }
+
+        .question-block.active {
+            display: block;
+            animation: fadeInSlide 0.5s ease;
+        }
+
+        @keyframes fadeInSlide {
+            0% {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .question-progress {
+            text-align: center;
+            margin-bottom: 24px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            margin-bottom: 24px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-card {
+            padding: 20px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .answer-card:hover {
+            border-color: rgba(120, 119, 198, 0.5);
+            background: rgba(120, 119, 198, 0.08);
+            transform: translateX(8px);
+        }
+
+        .answer-card.correct {
+            background: rgba(78, 205, 196, 0.15);
+            border-color: #4ecdc4;
+            color: #4ecdc4;
+        }
+
+        .answer-card.incorrect {
+            background: rgba(255, 107, 107, 0.15);
+            border-color: rgba(255, 107, 107, 0.3);
+            opacity: 0.5;
+        }
+
+        .answer-card.disabled {
+            pointer-events: none;
+        }
+
+        .answer-card img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Step 3 - Slider */
+        .slider-container {
+            margin: 48px 0;
+        }
+
+        .slider-value-container {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .slider-value {
+            font-size: 4em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .slider-hint {
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .slider::-webkit-slider-track {
+            width: 100%;
+            height: 8px;
+            background: transparent;
+            border-radius: 8px;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+            border: 3px solid #0f0f0f;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.6);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+            border: 3px solid #0f0f0f;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+        }
+
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding: 0 4px;
+        }
+
+        .slider-label {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+        }
+
+        /* Final Step */
+        .congratulations {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 32px;
+            background: rgba(78, 205, 196, 0.08);
+            border-radius: 20px;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .congratulations h2 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .congratulations h2 .emoji {
+            font-style: normal;
+        }
+
+        .congratulations h2 .gradient-text {
+            background: linear-gradient(135deg, #4ecdc4 0%, #7877c6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .congratulations p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1em;
+        }
+
+        .final-message {
+            line-height: 1.9;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            font-size: 1.05em;
+            display: none;
+        }
+
+        .final-message.visible {
+            display: block;
+            animation: fadeInSlide 0.5s ease;
+        }
+
+        .final-message p {
+            margin-bottom: 16px;
+        }
+
+        .final-message strong {
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+
+        .final-question {
+            font-size: 2.2em;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 48px 0 40px 0;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            display: none;
+        }
+
+        .final-question.visible {
+            display: block;
+            animation: fadeInSlide 0.6s ease;
+        }
+
+        .final-buttons {
+            display: none;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .final-buttons.visible {
+            display: flex;
+            animation: fadeInSlide 0.7s ease;
+        }
+
+        .final-btn {
+            padding: 18px 56px;
+            font-size: 1.2em;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a89f 100%);
+            color: #0f0f0f;
+            box-shadow: 0 4px 16px rgba(78, 205, 196, 0.3);
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 24px rgba(78, 205, 196, 0.5);
+        }
+
+        .btn-no {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1.5px solid rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-no:hover {
+            background: rgba(255, 107, 107, 0.3);
+            border-color: rgba(255, 107, 107, 0.6);
+        }
+
+        .reveal-btn {
+            margin-top: 32px;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 24px;
+            font-weight: 500;
+            font-size: 1em;
+            padding: 12px 20px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .success-message {
+            color: #4ecdc4;
+            margin-top: 32px;
+            font-weight: 600;
+            font-size: 1.4em;
+            padding: 20px;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 14px;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+
+            .welcome-screen,
+            .step {
+                padding: 32px 24px;
+            }
+
+            .welcome-screen h1 {
+                font-size: 2.2em;
+            }
+
+            .cipher-text {
+                font-size: 1em;
+                padding: 20px;
+            }
+
+            .congratulations h2 {
+                font-size: 2em;
+            }
+
+            .final-question {
+                font-size: 1.6em;
+            }
+
+            .slider-value {
+                font-size: 3em;
+            }
+
+            .final-btn {
+                padding: 16px 40px;
+                font-size: 1.1em;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcome">
+            <h1>Bienvenue.</h1>
+            <p>Si tu es arrivée ici, c'est que tu as accepté de jouer.</p>
+            <button class="btn" onclick="startGame()">Commencer</button>
+        </div>
+
+        <!-- Step 1: Caesar Cipher -->
+        <div class="step" id="step1">
+            <div class="step-header">
+                <div class="step-title">Étape 1 : Déchiffrage</div>
+                <div class="step-instruction">
+                    Déchiffre le message en utilisant le code César. Trouve le bon décalage pour révéler la phrase
+                    cachée !
+                </div>
+            </div>
+            <div class="cipher-text" id="cipherText"></div>
+            <div class="cipher-controls">
+                <button class="cipher-btn" onclick="decreaseShift()">−</button>
+                <div class="cipher-value" id="shiftValue">0</div>
+                <button class="cipher-btn" onclick="increaseShift()">+</button>
+            </div>
+            <button class="btn check-btn" onclick="checkCipher()">Vérifier</button>
+            <div class="error-message" id="error1" style="display: none;"></div>
+        </div>
+
+        <!-- Step 2: QCM -->
+        <div class="step" id="step2">
+            <div class="step-header">
+                <div class="step-title">Étape 2 : Questions personnelles</div>
+                <div class="step-instruction">
+                    Réponds correctement aux 3 questions. Attention, toutes les réponses doivent être justes !
+                </div>
+            </div>
+
+            <div class="question-progress" id="questionProgress">Question 1/3</div>
+
+            <div id="questionsContainer"></div>
+        </div>
+
+        <!-- Step 3: Slider -->
+        <div class="step" id="step3">
+            <div class="step-header">
+                <div class="step-title">Étape 3 : La note</div>
+                <div class="step-instruction">
+                    Quelle a été ta note au bac blanc de Maths ?
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-value-container">
+                    <div class="slider-value" id="sliderValue">20</div>
+                    <div class="slider-hint">(indice c'est peu mais je t'aime quand même)</div>
+                </div>
+                <div class="slider-wrapper">
+                    <input type="range" min="0" max="20" value="20" class="slider" id="noteSlider"
+                        oninput="updateSliderValue()">
+                    <div class="slider-labels">
+                        <span class="slider-label">0</span>
+                        <span class="slider-label">20</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn" onclick="checkNote()">Confirmer le choix</button>
+            <div class="error-message" id="error3" style="display: none;"></div>
+        </div>
+
+        <!-- Final Step -->
+        <div class="step" id="stepFinal">
+            <div class="congratulations">
+                <h2><span class="emoji">🎉</span> <span class="gradient-text">Bravo !</span></h2>
+                <p>T'es forte pour un ptit poisson rouge...</p>
+            </div>
+
+
+
+            <div class="final-message visible" id="finalMessage">
+                <p>Ok, donc déjà : <strong>bien joué</strong>, j'ai toujours cru en toi !</p>
+                <p>Je savais que tu irais loin mais là t'as vraiment tout trouvé ehh ?!</p>
+                <br>
+                <p>En vrai, si j'ai préparé tout ça, c'est parce que j'avais envie de te demander quelque chose
+                    d'important, mais d'une façon un peu originale, et personnel</p>
+                <p>Et comme t'as joué le jeu jusqu'au bout, je me lance :</p>
+            </div>
+
+            <button class="btn reveal-btn" id="revealBtn" onclick="revealMessage()">Afficher la suite</button>
+
+            <div class="final-question" id="finalQuestion">
+                Est-ce que tu veux venir au bal de fin d'année avec moi ?
+            </div>
+
+            <div class="final-buttons" id="finalButtons">
+                <button class="final-btn btn-yes" onclick="handleResponse(true)">Oui !</button>
+                <button class="final-btn btn-no" onclick="handleResponse(false)">Non</button>
+            </div>
+
+            <div class="success-message" id="successMessage" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let originalShift = 0;
+        let currentShift = 0;
+        const targetPhrase = "Les poissons rouges moi je les aimes de tout mon coeur";
+        let encryptedPhrase = "";
+        let currentQuestionIndex = 0;
+        let shuffledQuestions = [];
+
+        // Questions QCM
+        const questions = [
+            {
+                text: "Comment remercier une voiture qui te laisse passer sur le passage piéton ?",
+                answers: [
+                    { content: '<span style="font-size: 2em;">🫶🏻</span><span>Option A</span>', correct: false },
+                    { content: '<span style="font-size: 2em;">🫸🏻</span><span>Option B</span>', correct: false },
+                    { content: '<span style="font-size: 2em;">🙏🏻</span><span>Option C</span>', correct: true }
+                ]
+            },
+            {
+                text: "Quand est-ce que Louna doit avoir peur pendant un film d'horreur ?",
+                answers: [
+                    { content: '<span>Quand un camion klaxonne</span>', correct: true },
+                    { content: '<span>Quand le monstre apparait</span>', correct: false },
+                    { content: '<span>Quand tu sais pas où se trouve le QR code des 20% adopt...</span>', correct: false }
+                ]
+            },
+            {
+                text: "Question méchante, car tu connais pas la réponse j'pense: quel a été le parfum que tu m'as dit avoir préféré sur les 3 que je t'ai fais sentir ?",
+                answers: [
+                    {
+                        content: '<img src="https://adopt.twic.pics/media/catalog/product/l/i/life_perf_magnetico_30ml_3701429822811_1_2.jpg?twic=v1/max=1033.5" alt="Magnetico"><span>Magnetico</span>',
+                        correct: true
+                    },
+                    {
+                        content: '<img src="https://adopt.twic.pics/media/catalog/product/l/i/life_perf_leauvirile_30ml_3701429811006_1_3.jpg?twic=v1/max=1033.5" alt="L\'Eau Virile"><span>L\'Eau Virile</span>',
+                        correct: false
+                    },
+                    {
+                        content: '<img src="https://adopt.twic.pics/media/catalog/product/u/r/urban_chic_30ml_ecom-1.png?twic=v1/max=1033.5" alt="Urban Chic"><span>Urban Chic</span>',
+                        correct: false
+                    }
+                ]
+            }
+        ];
+
+        // Fonction pour mélanger un tableau
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Initialisation du jeu
+        function startGame() {
+            document.getElementById('welcome').style.display = 'none';
+            initStep1();
+            document.getElementById('step1').classList.add('active');
+        }
+
+        // Step 1: Caesar Cipher
+        function initStep1() {
+            originalShift = Math.floor(Math.random() * 25) + 1;
+            encryptedPhrase = caesarCipher(targetPhrase, originalShift);
+            currentShift = 0;
+            document.getElementById('cipherText').textContent = encryptedPhrase;
+            document.getElementById('shiftValue').textContent = currentShift;
+        }
+
+        function caesarCipher(text, shift) {
+            return text.split('').map(char => {
+                if (char.match(/[a-z]/i)) {
+                    const code = char.charCodeAt(0);
+                    let base = code >= 65 && code <= 90 ? 65 : 97;
+                    return String.fromCharCode(((code - base + shift) % 26) + base);
+                }
+                return char;
+            }).join('');
+        }
+
+        function increaseShift() {
+            currentShift = (currentShift + 1) % 26;
+            updateCipherDisplay();
+        }
+
+        function decreaseShift() {
+            currentShift = (currentShift - 1 + 26) % 26;
+            updateCipherDisplay();
+        }
+
+        function updateCipherDisplay() {
+            document.getElementById('shiftValue').textContent = currentShift;
+            const displayedText = caesarCipher(encryptedPhrase, currentShift);
+            document.getElementById('cipherText').textContent = displayedText;
+        }
+
+        function checkCipher() {
+            const decrypted = caesarCipher(encryptedPhrase, currentShift);
+            if (decrypted.toLowerCase() === targetPhrase.toLowerCase()) {
+                document.getElementById('step1').classList.remove('active');
+                setTimeout(() => {
+                    initStep2();
+                    document.getElementById('step2').classList.add('active');
+                }, 300);
+            } else {
+                const errorDiv = document.getElementById('error1');
+                errorDiv.textContent = "Ce n'est pas la bonne phrase... Réessaye !";
+                errorDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Step 2: QCM
+        function initStep2() {
+            // Mélanger les questions
+            shuffledQuestions = shuffleArray(questions);
+
+            // Mélanger les réponses de chaque question
+            shuffledQuestions = shuffledQuestions.map(q => ({
+                ...q,
+                answers: shuffleArray(q.answers)
+            }));
+
+            currentQuestionIndex = 0;
+            displayCurrentQuestion();
+        }
+
+        function displayCurrentQuestion() {
+            const container = document.getElementById('questionsContainer');
+            const question = shuffledQuestions[currentQuestionIndex];
+
+            document.getElementById('questionProgress').textContent = `Question ${currentQuestionIndex + 1}/3`;
+
+            let html = `
+                <div class="question-block active">
+                    <div class="question-text">${question.text}</div>
+                    <div class="answers">
+            `;
+
+            question.answers.forEach((answer, index) => {
+                html += `
+                    <div class="answer-card" onclick="selectAnswer(${index})">
+                        ${answer.content}
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function selectAnswer(answerIndex) {
+            const question = shuffledQuestions[currentQuestionIndex];
+            const isCorrect = question.answers[answerIndex].correct;
+
+            const cards = document.querySelectorAll('.answer-card');
+
+            if (isCorrect) {
+                // Marquer les bonnes et mauvaises réponses
+                cards.forEach((card, index) => {
+                    card.classList.add('disabled');
+                    if (index === answerIndex) {
+                        card.classList.add('correct');
+                    } else {
+                        card.classList.add('incorrect');
+                    }
+                });
+
+                setTimeout(() => {
+                    currentQuestionIndex++;
+
+                    if (currentQuestionIndex < shuffledQuestions.length) {
+                        // Question suivante
+                        displayCurrentQuestion();
+                    } else {
+                        // Toutes les questions sont réussies
+                        document.getElementById('step2').classList.remove('active');
+                        setTimeout(() => {
+                            document.getElementById('step3').classList.add('active');
+                        }, 300);
+                    }
+                }, 1500);
+            } else {
+                // Mauvaise réponse - retour au début
+                setTimeout(() => {
+                    document.getElementById('step2').classList.remove('active');
+                    setTimeout(() => {
+                        initStep1();
+                        document.getElementById('step1').classList.add('active');
+                    }, 300);
+                }, 500);
+            }
+        }
+
+        // Step 3: Slider
+        function getColorForValue(value) {
+            if (value >= 15) {
+                return '#4ecdc4';
+            } else if (value >= 10) {
+                return '#ffd93d';
+            } else if (value >= 5) {
+                return '#ff9a3d';
+            } else {
+                return '#ff6b6b';
+            }
+        }
+
+        function updateSliderValue() {
+            const value = parseInt(document.getElementById('noteSlider').value);
+            const sliderValueDiv = document.getElementById('sliderValue');
+            const slider = document.getElementById('noteSlider');
+
+            sliderValueDiv.textContent = value;
+
+            const color = getColorForValue(value);
+            sliderValueDiv.style.color = color;
+
+            const percentage = (value / 20) * 100;
+            slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${percentage}%, rgba(255, 255, 255, 0.1) ${percentage}%, rgba(255, 255, 255, 0.1) 100%)`;
+
+            document.documentElement.style.setProperty('--slider-color', color);
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            :root {
+                --slider-color: #4ecdc4;
+            }
+            .slider::-webkit-slider-thumb {
+                background: var(--slider-color) !important;
+                box-shadow: 0 4px 12px var(--slider-color) !important;
+            }
+            .slider::-moz-range-thumb {
+                background: var(--slider-color) !important;
+                box-shadow: 0 4px 12px var(--slider-color) !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        window.addEventListener('load', () => {
+            updateSliderValue();
+        });
+
+        function checkNote() {
+            const value = document.getElementById('noteSlider').value;
+            if (value === "2") {
+                document.getElementById('step3').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('stepFinal').classList.add('active');
+                }, 300);
+            } else {
+                const errorDiv = document.getElementById('error3');
+                errorDiv.textContent = "Hmm... ce n'est pas la bonne note !";
+                errorDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                    document.getElementById('step3').classList.remove('active');
+                    setTimeout(() => {
+                        initStep1();
+                        document.getElementById('step1').classList.add('active');
+                    }, 300);
+                }, 2000);
+            }
+        }
+
+        // Révéler le message final
+        function revealMessage() {
+            document.getElementById('revealBtn').style.display = 'none';
+
+            setTimeout(() => {
+                document.getElementById('finalQuestion').classList.add('visible');
+            }, 500);
+
+            setTimeout(() => {
+                document.getElementById('finalButtons').classList.add('visible');
+            }, 1000);
+        }
+
+        // Final Response
+        function handleResponse(isYes) {
+            const messageDiv = document.getElementById('successMessage');
+            if (isYes) {
+                messageDiv.textContent = "LETS GOOOOO LES MECSS !! ELLE A DIT OUIIIIII 🎉";
+                messageDiv.style.display = 'block';
+                messageDiv.style.color = '#4ecdc4';
+                messageDiv.style.background = 'rgba(78, 205, 196, 0.1)';
+                messageDiv.style.border = '1px solid rgba(78, 205, 196, 0.3)';
+            } else {
+                messageDiv.textContent = "La réponse est non ?! C'est pas grave, je t'aime quand même ! 💔";
+                messageDiv.style.display = 'block';
+                messageDiv.style.color = '#ff6b6b';
+                messageDiv.style.background = 'rgba(255, 107, 107, 0.1)';
+                messageDiv.style.border = '1px solid rgba(255, 107, 107, 0.3)';
+            }
+        }
+    </script>
+</body>
+
+</html>
