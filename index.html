@@ -1,958 +1,291 @@
-<!DOCTYPE html>
-<html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ptite demande</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;1,400;1,500&display=swap');
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    :root {
-        --lavande:     #b8aee8;
-        --lavande-soft:#d6d0f5;
-        --bleu:        #8ab4d4;
-        --jaune:       #f5d97a;
-        --jaune-soft:  #fdf0b8;
-        --bg:          #12111a;
-        --surface:     #1a1928;
-        --surface-2:   #201f30;
-        --border:      rgba(184, 174, 232, 0.18);
-        --text:        rgba(240, 238, 255, 0.92);
-        --text-muted:  rgba(184, 174, 232, 0.65);
-    }
-
-    body {
-        font-family: 'Nunito', sans-serif;
-        background: var(--bg);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        position: relative;
-        overflow-x: hidden;
-        color: var(--text);
-    }
-
-    body::before {
-        content: '';
-        position: fixed;
-        inset: 0;
-        background:
-            radial-gradient(ellipse at 20% 40%, rgba(138, 130, 200, 0.18) 0%, transparent 55%),
-            radial-gradient(ellipse at 80% 70%, rgba(138, 180, 212, 0.12) 0%, transparent 50%),
-            radial-gradient(ellipse at 55% 10%, rgba(245, 217, 122, 0.08) 0%, transparent 45%);
-        pointer-events: none;
-        animation: breathe 14s ease-in-out infinite;
-    }
-
-    @keyframes breathe {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
-    }
-
-    .container {
-        max-width: 660px;
-        width: 100%;
-        position: relative;
-        z-index: 1;
-    }
-
-    .welcome-screen, .step {
-        background: rgba(26, 25, 40, 0.97);
-        backdrop-filter: blur(24px);
-        padding: 50px;
-        border-radius: 22px;
-        border: 1px solid var(--border);
-        box-shadow:
-            0 8px 40px rgba(0, 0, 0, 0.4),
-            0 1px 0 rgba(184, 174, 232, 0.12) inset;
-    }
-
-    .welcome-screen h1 {
-        font-family: 'Lora', Georgia, serif;
-        font-size: 3em;
-        font-weight: 400;
-        font-style: italic;
-        letter-spacing: 0.01em;
-        margin-bottom: 20px;
-        color: var(--lavande-soft);
-        line-height: 1.15;
-    }
-
-    .welcome-screen p {
-        font-size: 1.05em;
-        color: var(--text-muted);
-        margin-bottom: 40px;
-        line-height: 1.8;
-        font-weight: 400;
-    }
-
-    .btn {
-        background: rgba(138, 130, 200, 0.2);
-        color: var(--lavande-soft);
-        border: 1px solid rgba(184, 174, 232, 0.4);
-        padding: 14px 48px;
-        border-radius: 50px;
-        font-size: 1em;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 18px rgba(138, 130, 200, 0.2);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn::before {
-        content: '';
-        position: absolute;
-        top: 0; left: -100%;
-        width: 100%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-        transition: left 0.5s ease;
-    }
-
-    .btn:hover::before { left: 100%; }
-
-    .btn:hover {
-        background: rgba(138, 130, 200, 0.32);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 26px rgba(138, 130, 200, 0.32);
-        border-color: rgba(184, 174, 232, 0.65);
-    }
-
-    .btn:active { transform: translateY(0); }
-
-    .step {
-        display: none;
-        animation: softReveal 0.6s cubic-bezier(0.34, 1.4, 0.64, 1);
-    }
-
-    @keyframes softReveal {
-        0%   { transform: scale(0.95) translateY(16px); opacity: 0; }
-        100% { transform: scale(1) translateY(0); opacity: 1; }
-    }
-
-    .step.active { display: block; }
-
-    .step-header {
-        padding: 24px 26px;
-        border-radius: 16px;
-        margin-bottom: 34px;
-        background: rgba(255, 255, 255, 0.025);
-        border: 1px solid var(--border);
-        position: relative;
-    }
-
-    .step-header::before {
-        content: '';
-        position: absolute;
-        left: 0; top: 0; bottom: 0;
-        width: 3px;
-        background: linear-gradient(180deg, var(--lavande), var(--bleu));
-        border-radius: 16px 0 0 16px;
-    }
-
-    .step-title {
-        font-family: 'Lora', Georgia, serif;
-        font-size: 1.55em;
-        font-weight: 400;
-        font-style: italic;
-        color: var(--lavande-soft);
-        margin-bottom: 10px;
-    }
-
-    .step-instruction {
-        color: var(--text-muted);
-        font-size: 0.95em;
-        line-height: 1.7;
-        font-weight: 400;
-    }
-
-    /* Step 1 - Caesar */
-    .cipher-text {
-        font-size: 1.15em;
-        letter-spacing: 1.5px;
-        padding: 26px;
-        background: rgba(255, 255, 255, 0.025);
-        border-radius: 14px;
-        margin: 22px 0;
-        font-family: 'Courier New', monospace;
-        word-wrap: break-word;
-        color: rgba(214, 208, 245, 0.8);
-        border: 1px solid var(--border);
-        line-height: 1.9;
-    }
-
-    .cipher-controls {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 36px;
-        margin: 38px 0;
-    }
-
-    .cipher-btn {
-        width: 52px;
-        height: 52px;
-        font-size: 1.6em;
-        border-radius: 50%;
-        border: 1px solid rgba(184, 174, 232, 0.35);
-        background: rgba(138, 130, 200, 0.12);
-        color: var(--lavande);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 400;
-    }
-
-    .cipher-btn:hover {
-        background: rgba(138, 130, 200, 0.25);
-        transform: scale(1.1);
-        border-color: rgba(184, 174, 232, 0.6);
-    }
-
-    .cipher-btn:active { transform: scale(0.95); }
-
-    .cipher-value {
-        font-family: 'Lora', Georgia, serif;
-        font-size: 2.8em;
-        font-weight: 400;
-        color: var(--lavande-soft);
-        min-width: 80px;
-        text-align: center;
-    }
-
-    .check-btn { margin-top: 24px; }
-
-    /* Step 2 - QCM */
-    .question-block { display: none; }
-
-    .question-block.active {
-        display: block;
-        animation: fadeInSlide 0.45s ease;
-    }
-
-    @keyframes fadeInSlide {
-        0%   { opacity: 0; transform: translateX(16px); }
-        100% { opacity: 1; transform: translateX(0); }
-    }
-
-    .question-progress {
-        text-align: center;
-        margin-bottom: 22px;
-        color: rgba(184, 174, 232, 0.45);
-        font-size: 0.82em;
-        font-weight: 600;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-    }
-
-    .question-text {
-        font-size: 1.08em;
-        margin-bottom: 20px;
-        color: var(--text);
-        font-weight: 500;
-        line-height: 1.65;
-    }
-
-    .answers {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .answer-card {
-        padding: 17px 20px;
-        background: rgba(255, 255, 255, 0.025);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        color: rgba(240, 238, 255, 0.72);
-        font-weight: 400;
-    }
-
-    .answer-card:hover {
-        border-color: rgba(184, 174, 232, 0.45);
-        background: rgba(138, 130, 200, 0.1);
-        transform: translateX(6px);
-        color: var(--text);
-    }
-
-    .answer-card.correct {
-        background: rgba(138, 130, 200, 0.15);
-        border-color: var(--lavande);
-        color: var(--lavande-soft);
-    }
-
-    .answer-card.incorrect {
-        background: rgba(255, 255, 255, 0.02);
-        border-color: rgba(255, 255, 255, 0.06);
-        opacity: 0.4;
-    }
-
-    .answer-card.disabled { pointer-events: none; }
-
-    .answer-card img {
-        width: 58px;
-        height: 58px;
-        object-fit: cover;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-    }
-
-    /* Step 3 - Slider */
-    .slider-container { margin: 44px 0; }
-
-    .slider-value-container {
-        text-align: center;
-        margin-bottom: 24px;
-    }
-
-    .slider-value {
-        font-family: 'Lora', Georgia, serif;
-        font-size: 4.2em;
-        font-weight: 400;
-        margin-bottom: 8px;
-        transition: color 0.3s ease;
-        color: var(--lavande-soft);
-    }
-
-    .slider-hint {
-        font-size: 0.9em;
-        color: var(--text-muted);
-        font-style: italic;
-        font-weight: 400;
-    }
-
-    .slider-wrapper {
-        position: relative;
-        padding: 20px 0;
-    }
-
-    .slider {
-        width: 100%;
-        height: 6px;
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.08);
-        outline: none;
-        -webkit-appearance: none;
-        cursor: pointer;
-    }
-
-    .slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: var(--lavande);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 14px rgba(138, 130, 200, 0.45);
-        border: 3px solid var(--bg);
-    }
-
-    .slider::-webkit-slider-thumb:hover {
-        transform: scale(1.2);
-        box-shadow: 0 6px 22px rgba(138, 130, 200, 0.6);
-    }
-
-    .slider::-moz-range-thumb {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: var(--lavande);
-        cursor: pointer;
-        border: 3px solid var(--bg);
-        box-shadow: 0 4px 14px rgba(138, 130, 200, 0.45);
-    }
-
-    .slider-labels {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 10px;
-    }
-
-    .slider-label {
-        font-size: 0.85em;
-        color: rgba(184, 174, 232, 0.4);
-        font-weight: 500;
-    }
-
-    /* Final Step */
-    .congratulations {
-        text-align: center;
-        margin-bottom: 40px;
-        padding: 30px;
-        background: rgba(138, 130, 200, 0.08);
-        border-radius: 18px;
-        border: 1px solid rgba(184, 174, 232, 0.2);
-    }
-
-    .congratulations h2 {
-        font-family: 'Lora', Georgia, serif;
-        font-size: 2.8em;
-        font-weight: 400;
-        font-style: italic;
-        margin-bottom: 10px;
-        letter-spacing: 0.01em;
-    }
-
-    .congratulations h2 .emoji { font-style: normal; }
-
-    .congratulations h2 .gradient-text {
-        background: linear-gradient(135deg, var(--lavande-soft) 0%, var(--jaune) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .congratulations p {
-        color: var(--text-muted);
-        font-size: 1em;
-        font-weight: 400;
-    }
-
-    .final-message {
-        line-height: 1.9;
-        color: rgba(240, 238, 255, 0.78);
-        margin-bottom: 40px;
-        font-size: 1.02em;
-        display: none;
-        font-weight: 400;
-    }
-
-    .final-message.visible {
-        display: block;
-        animation: fadeInSlide 0.5s ease;
-    }
-
-    .final-message p { margin-bottom: 14px; }
-
-    .final-message strong {
-        color: var(--jaune);
-        font-weight: 600;
-    }
-
-    .final-question {
-        font-family: 'Lora', Georgia, serif;
-        font-size: 2.1em;
-        font-weight: 400;
-        font-style: italic;
-        color: var(--text);
-        margin: 48px 0 38px 0;
-        line-height: 1.4;
-        letter-spacing: 0.01em;
-        display: none;
-    }
-
-    .final-question.visible {
-        display: block;
-        animation: fadeInSlide 0.6s ease;
-    }
-
-    .final-buttons {
-        display: none;
-        gap: 14px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .final-buttons.visible {
-        display: flex;
-        animation: fadeInSlide 0.7s ease;
-    }
-
-    .final-btn {
-        padding: 16px 52px;
-        font-size: 1.05em;
-        border-radius: 50px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 600;
-        position: relative;
-    }
-
-    .btn-yes {
-        background: rgba(138, 130, 200, 0.25);
-        color: var(--lavande-soft);
-        border: 1px solid rgba(184, 174, 232, 0.45);
-        box-shadow: 0 4px 18px rgba(138, 130, 200, 0.2);
-    }
-
-    .btn-yes:hover {
-        background: rgba(138, 130, 200, 0.38);
-        transform: scale(1.05) translateY(-2px);
-        box-shadow: 0 8px 26px rgba(138, 130, 200, 0.35);
-        border-color: rgba(184, 174, 232, 0.7);
-    }
-
-    .btn-no {
-        background: rgba(255, 255, 255, 0.03);
-        color: rgba(240, 238, 255, 0.35);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .btn-no:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.14);
-    }
-
-    .reveal-btn { margin-top: 32px; }
-
-    .error-message {
-        color: rgba(214, 208, 245, 0.7);
-        margin-top: 22px;
-        font-weight: 500;
-        font-size: 0.95em;
-        padding: 12px 20px;
-        background: rgba(138, 130, 200, 0.08);
-        border-radius: 10px;
-        border: 1px solid rgba(184, 174, 232, 0.2);
-    }
-
-    .success-message {
-        margin-top: 32px;
-        font-weight: 500;
-        font-size: 1.25em;
-        padding: 20px;
-        border-radius: 14px;
-        text-align: center;
-        font-family: 'Lora', Georgia, serif;
-        font-style: italic;
-    }
-
-    @media (max-width: 600px) {
-        .welcome-screen, .step { padding: 30px 20px; }
-        .welcome-screen h1 { font-size: 2.2em; }
-        .cipher-text { font-size: 0.95em; padding: 18px; }
-        .congratulations h2 { font-size: 2em; }
-        .final-question { font-size: 1.6em; }
-        .slider-value { font-size: 3em; }
-        .final-btn { padding: 14px 36px; font-size: 1em; }
-        .btn-no::after { font-size: 0.38em; }
-    }
-</style>
-</head>
-
-<body>
-    <div class="container">
-        <!-- Welcome Screen -->
-        <div class="welcome-screen" id="welcome">
-            <h1>Bienvenue.</h1>
-            <p>Si tu es arrivée ici, c'est que tu as accepté de jouer.</p>
-            <button class="btn" onclick="startGame()">Commencer</button>
-        </div>
-
-        <!-- Step 1: Caesar Cipher -->
-        <div class="step" id="step1">
-            <div class="step-header">
-                <div class="step-title">Étape 1 : Déchiffrage</div>
-                <div class="step-instruction">
-                    Déchiffre le message en utilisant le code César. Trouve le bon décalage pour révéler la phrase
-                    cachée !
-                </div>
-            </div>
-            <div class="cipher-text" id="cipherText"></div>
-            <div class="cipher-controls">
-                <button class="cipher-btn" onclick="decreaseShift()">−</button>
-                <div class="cipher-value" id="shiftValue">0</div>
-                <button class="cipher-btn" onclick="increaseShift()">+</button>
-            </div>
-            <button class="btn check-btn" onclick="checkCipher()">Vérifier</button>
-            <div class="error-message" id="error1" style="display: none;"></div>
-        </div>
-
-        <!-- Step 2: QCM -->
-        <div class="step" id="step2">
-            <div class="step-header">
-                <div class="step-title">Étape 2 : Questions personnelles</div>
-                <div class="step-instruction">
-                    Réponds correctement aux 3 questions. Attention, toutes les réponses doivent être justes !
-                </div>
-            </div>
-
-            <div class="question-progress" id="questionProgress">Question 1/3</div>
-
-            <div id="questionsContainer"></div>
-        </div>
-
-        <!-- Step 3: Slider -->
-        <div class="step" id="step3">
-            <div class="step-header">
-                <div class="step-title">Étape 3 : La note</div>
-                <div class="step-instruction">
-                    Quelle a été ta note au bac blanc de Maths ?
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-value-container">
-                    <div class="slider-value" id="sliderValue">20</div>
-                    <div class="slider-hint">(indice c'est peu mais je t'aime quand même)</div>
-                </div>
-                <div class="slider-wrapper">
-                    <input type="range" min="0" max="20" value="20" class="slider" id="noteSlider"
-                        oninput="updateSliderValue()">
-                    <div class="slider-labels">
-                        <span class="slider-label">0</span>
-                        <span class="slider-label">20</span>
-                    </div>
-                </div>
-            </div>
-            <button class="btn" onclick="checkNote()">Confirmer le choix</button>
-            <div class="error-message" id="error3" style="display: none;"></div>
-        </div>
-
-        <!-- Final Step -->
-        <div class="step" id="stepFinal">
-            <div class="congratulations">
-                <h2><span class="emoji">🎉</span> <span class="gradient-text">Bravo !</span></h2>
-                <p>T'es forte pour un ptit poisson rouge...</p>
-            </div>
-
-
-
-            <div class="final-message visible" id="finalMessage">
-                <p>Ok, donc déjà : <strong>bien joué</strong>, j'ai toujours cru en toi !</p>
-                <p>Je savais que tu irais loin mais là t'as vraiment tout trouvé ehh ?!</p>
-                <br>
-                <p>En vrai, si j'ai préparé tout ça, c'est parce que j'avais envie de te demander quelque chose
-                    d'important, mais d'une façon un peu originale, et personnel</p>
-                <p>Et comme t'as joué le jeu jusqu'au bout, je me lance :</p>
-            </div>
-
-            <button class="btn reveal-btn" id="revealBtn" onclick="revealMessage()">Afficher la suite</button>
-
-            <div class="final-question" id="finalQuestion">
-                Est-ce que tu veux venir au bal de fin d'année avec moi ?
-            </div>
-
-            <div class="final-buttons" id="finalButtons">
-                <button class="final-btn btn-yes" onclick="handleResponse(true)">Oui !</button>
-                <button class="final-btn btn-no" onclick="handleResponse(false)">Non</button>
-            </div>
-
-            <div class="success-message" id="successMessage" style="display: none;"></div>
-        </div>
-    </div>
-
-    <script>
-        // Variables globales
-        let originalShift = 0;
-        let currentShift = 0;
-        const targetPhrase = "Les poissons rouges moi je les aimes de tout mon coeur";
-        let encryptedPhrase = "";
-        let currentQuestionIndex = 0;
-        let shuffledQuestions = [];
-
-        // Questions QCM
-        const questions = [
-            {
-                text: "Comment remercier une voiture qui te laisse passer sur le passage piéton ?",
-                answers: [
-                    { content: '<span style="font-size: 2em;">🫶🏻</span><span>Option A</span>', correct: false },
-                    { content: '<span style="font-size: 2em;">🫸🏻</span><span>Option B</span>', correct: false },
-                    { content: '<span style="font-size: 2em;">🙏🏻</span><span>Option C</span>', correct: true }
-                ]
-            },
-            {
-                text: "Quand est-ce que Louna doit avoir peur pendant un film d'horreur ?",
-                answers: [
-                    { content: '<span>Quand un camion klaxonne</span>', correct: true },
-                    { content: '<span>Quand le monstre apparait</span>', correct: false },
-                    { content: '<span>Quand tu sais pas où se trouve le QR code des 20% adopt...</span>', correct: false }
-                ]
-            },
-            {
-                text: "Question méchante, car tu connais pas la réponse j'pense: quel a été le parfum que tu m'as dit avoir préféré sur les 3 que je t'ai fais sentir ?",
-                answers: [
-                    {
-                        content: '<img src="https://adopt.twic.pics/media/catalog/product/l/i/life_perf_magnetico_30ml_3701429822811_1_2.jpg?twic=v1/max=1033.5" alt="Magnetico"><span>Magnetico</span>',
-                        correct: true
-                    },
-                    {
-                        content: '<img src="https://adopt.twic.pics/media/catalog/product/l/i/life_perf_leauvirile_30ml_3701429811006_1_3.jpg?twic=v1/max=1033.5" alt="L\'Eau Virile"><span>L\'Eau Virile</span>',
-                        correct: false
-                    },
-                    {
-                        content: '<img src="https://adopt.twic.pics/media/catalog/product/u/r/urban_chic_30ml_ecom-1.png?twic=v1/max=1033.5" alt="Urban Chic"><span>Urban Chic</span>',
-                        correct: false
-                    }
-                ]
-            }
-        ];
-
-        // Fonction pour mélanger un tableau
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        // Initialisation du jeu
-        function startGame() {
-            document.getElementById('welcome').style.display = 'none';
-            initStep1();
-            document.getElementById('step1').classList.add('active');
-        }
-
-        // Step 1: Caesar Cipher
-        function initStep1() {
-            originalShift = Math.floor(Math.random() * 25) + 1;
-            encryptedPhrase = caesarCipher(targetPhrase, originalShift);
-            currentShift = 0;
-            document.getElementById('cipherText').textContent = encryptedPhrase;
-            document.getElementById('shiftValue').textContent = currentShift;
-        }
-
-        function caesarCipher(text, shift) {
-            return text.split('').map(char => {
-                if (char.match(/[a-z]/i)) {
-                    const code = char.charCodeAt(0);
-                    let base = code >= 65 && code <= 90 ? 65 : 97;
-                    return String.fromCharCode(((code - base + shift) % 26) + base);
-                }
-                return char;
-            }).join('');
-        }
-
-        function increaseShift() {
-            currentShift = (currentShift + 1) % 26;
-            updateCipherDisplay();
-        }
-
-        function decreaseShift() {
-            currentShift = (currentShift - 1 + 26) % 26;
-            updateCipherDisplay();
-        }
-
-        function updateCipherDisplay() {
-            document.getElementById('shiftValue').textContent = currentShift;
-            const displayedText = caesarCipher(encryptedPhrase, currentShift);
-            document.getElementById('cipherText').textContent = displayedText;
-        }
-
-        function checkCipher() {
-            const decrypted = caesarCipher(encryptedPhrase, currentShift);
-            if (decrypted.toLowerCase() === targetPhrase.toLowerCase()) {
-                document.getElementById('step1').classList.remove('active');
-                setTimeout(() => {
-                    initStep2();
-                    document.getElementById('step2').classList.add('active');
-                }, 300);
-            } else {
-                const errorDiv = document.getElementById('error1');
-                errorDiv.textContent = "Ce n'est pas la bonne phrase... Réessaye !";
-                errorDiv.style.display = 'block';
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 3000);
-            }
-        }
-
-        // Step 2: QCM
-        function initStep2() {
-            // Mélanger les questions
-            shuffledQuestions = shuffleArray(questions);
-
-            // Mélanger les réponses de chaque question
-            shuffledQuestions = shuffledQuestions.map(q => ({
-                ...q,
-                answers: shuffleArray(q.answers)
-            }));
-
-            currentQuestionIndex = 0;
-            displayCurrentQuestion();
-        }
-
-        function displayCurrentQuestion() {
-            const container = document.getElementById('questionsContainer');
-            const question = shuffledQuestions[currentQuestionIndex];
-
-            document.getElementById('questionProgress').textContent = `Question ${currentQuestionIndex + 1}/3`;
-
-            let html = `
-                <div class="question-block active">
-                    <div class="question-text">${question.text}</div>
-                    <div class="answers">
-            `;
-
-            question.answers.forEach((answer, index) => {
-                html += `
-                    <div class="answer-card" onclick="selectAnswer(${index})">
-                        ${answer.content}
-                    </div>
-                `;
-            });
-
-            html += `
-                    </div>
-                </div>
-            `;
-
-            container.innerHTML = html;
-        }
-
-        function selectAnswer(answerIndex) {
-            const question = shuffledQuestions[currentQuestionIndex];
-            const isCorrect = question.answers[answerIndex].correct;
-
-            const cards = document.querySelectorAll('.answer-card');
-
-            if (isCorrect) {
-                // Marquer les bonnes et mauvaises réponses
-                cards.forEach((card, index) => {
-                    card.classList.add('disabled');
-                    if (index === answerIndex) {
-                        card.classList.add('correct');
-                    } else {
-                        card.classList.add('incorrect');
-                    }
-                });
-
-                setTimeout(() => {
-                    currentQuestionIndex++;
-
-                    if (currentQuestionIndex < shuffledQuestions.length) {
-                        // Question suivante
-                        displayCurrentQuestion();
-                    } else {
-                        // Toutes les questions sont réussies
-                        document.getElementById('step2').classList.remove('active');
-                        setTimeout(() => {
-                            document.getElementById('step3').classList.add('active');
-                        }, 300);
-                    }
-                }, 1500);
-            } else {
-                // Mauvaise réponse - retour au début
-                setTimeout(() => {
-                    document.getElementById('step2').classList.remove('active');
-                    setTimeout(() => {
-                        initStep1();
-                        document.getElementById('step1').classList.add('active');
-                    }, 300);
-                }, 500);
-            }
-        }
-
-        // Step 3: Slider
-        function getColorForValue(value) {
-            if (value >= 15) {
-                return '#4ecdc4';
-            } else if (value >= 10) {
-                return '#ffd93d';
-            } else if (value >= 5) {
-                return '#ff9a3d';
-            } else {
-                return '#ff6b6b';
-            }
-        }
-
-        function updateSliderValue() {
-            const value = parseInt(document.getElementById('noteSlider').value);
-            const sliderValueDiv = document.getElementById('sliderValue');
-            const slider = document.getElementById('noteSlider');
-
-            sliderValueDiv.textContent = value;
-
-            const color = getColorForValue(value);
-            sliderValueDiv.style.color = color;
-
-            const percentage = (value / 20) * 100;
-            slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${percentage}%, rgba(255, 255, 255, 0.1) ${percentage}%, rgba(255, 255, 255, 0.1) 100%)`;
-
-            document.documentElement.style.setProperty('--slider-color', color);
-        }
-
-        const style = document.createElement('style');
-        style.innerHTML = `
-            :root {
-                --slider-color: #4ecdc4;
-            }
-            .slider::-webkit-slider-thumb {
-                background: var(--slider-color) !important;
-                box-shadow: 0 4px 12px var(--slider-color) !important;
-            }
-            .slider::-moz-range-thumb {
-                background: var(--slider-color) !important;
-                box-shadow: 0 4px 12px var(--slider-color) !important;
-            }
-        `;
-        document.head.appendChild(style);
-
-        window.addEventListener('load', () => {
-            updateSliderValue();
-        });
-
-        function checkNote() {
-            const value = document.getElementById('noteSlider').value;
-            if (value === "2") {
-                document.getElementById('step3').classList.remove('active');
-                setTimeout(() => {
-                    document.getElementById('stepFinal').classList.add('active');
-                }, 300);
-            } else {
-                const errorDiv = document.getElementById('error3');
-                errorDiv.textContent = "Hmm... ce n'est pas la bonne note !";
-                errorDiv.style.display = 'block';
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                    document.getElementById('step3').classList.remove('active');
-                    setTimeout(() => {
-                        initStep1();
-                        document.getElementById('step1').classList.add('active');
-                    }, 300);
-                }, 2000);
-            }
-        }
-
-        // Révéler le message final
-        function revealMessage() {
-            document.getElementById('revealBtn').style.display = 'none';
-
-            setTimeout(() => {
-                document.getElementById('finalQuestion').classList.add('visible');
-            }, 500);
-
-            setTimeout(() => {
-                document.getElementById('finalButtons').classList.add('visible');
-            }, 1000);
-        }
-
-        // Final Response
-        function handleResponse(isYes) {
-            const messageDiv = document.getElementById('successMessage');
-            if (isYes) {
-                messageDiv.textContent = "LETS GOOOOO LES MECSS !! ELLE A DIT OUIIIIII 🎉";
-                messageDiv.style.display = 'block';
-                messageDiv.style.color = '#4ecdc4';
-                messageDiv.style.background = 'rgba(78, 205, 196, 0.1)';
-                messageDiv.style.border = '1px solid rgba(78, 205, 196, 0.3)';
-            } else {
-                messageDiv.textContent = "La réponse est non ?! C'est pas grave, je t'aime quand même ! 💔";
-                messageDiv.style.display = 'block';
-                messageDiv.style.color = '#ff6b6b';
-                messageDiv.style.background = 'rgba(255, 107, 107, 0.1)';
-                messageDiv.style.border = '1px solid rgba(255, 107, 107, 0.3)';
-            }
-        }
-    </script>
-</body>
-
-</html>
+<p>Je te propose <strong>un sujet très fort, original et vraiment exploitable à l’oral</strong> :</p>
+<h1 id="sujet-de-grand-oral">Sujet de Grand Oral</h1>
+<p><strong>À partir de quand un speedrun de Minecraft devient-il mathématiquement suspect ?</strong></p>
+<h2 id="problématique">Problématique</h2>
+<p><strong>Dans quelle mesure les probabilités permettent-elles de distinguer, dans Minecraft, une performance très chanceuse d’une performance statistiquement invraisemblable ?</strong></p>
+<hr>
+<h1 id="pourquoi-ce-sujet-est-excellent">Pourquoi ce sujet est excellent</h1>
+<p>Il coche presque toutes les cases du 20/20 :</p>
+<ul>
+<li><strong>vraie problématique</strong> : on ne demande pas “à quoi servent les probabilités”, on cherche <strong>quand le hasard ne suffit plus à expliquer un résultat</strong></li>
+<li><strong>ancré dans le programme</strong> :
+<ul>
+<li>épreuves de Bernoulli</li>
+<li>loi binomiale</li>
+<li>espérance</li>
+<li>indépendance</li>
+<li>calcul de probabilités</li>
+</ul>
+</li>
+<li><strong>problème réel</strong> : validation de speedruns, détection de triche</li>
+<li><strong>original</strong> : Minecraft parle au jury parce que même s’il ne connaît pas le jeu, il comprend immédiatement l’idée de “chance”</li>
+<li><strong>très oral</strong> : tu peux raconter une histoire, poser une tension, répondre progressivement</li>
+</ul>
+<hr>
+<h1 id="notions-de-maths-à-mettre-en-avant">Notions de maths à mettre en avant</h1>
+<p>Tu peux dire explicitement au jury que tu mobilises :</p>
+<ul>
+<li><strong>la loi binomiale</strong></li>
+<li><strong>l’espérance</strong></li>
+<li><strong>la notion d’événements indépendants</strong></li>
+<li><strong>le calcul d’une probabilité d’obtenir au moins un certain nombre de succès</strong></li>
+</ul>
+<hr>
+<h1 id="plan-détaillé-pour-10-minutes">Plan détaillé pour 10 minutes</h1>
+<hr>
+<h2 id="000--100--introduction">0:00 – 1:00 : Introduction</h2>
+<h3 id="accroche">Accroche</h3>
+<p>Tu peux commencer comme ça :</p>
+<blockquote>
+<p>“Dans Minecraft, un speedrun consiste à finir le jeu le plus vite possible. Mais pour réussir, le joueur dépend en partie du hasard : certains objets rares tombent, d’autres non. La question est donc la suivante : à partir de quand un joueur est-il simplement très chanceux… et à partir de quand ses résultats deviennent-ils mathématiquement suspects ?”</p>
+</blockquote>
+<h3 id="ensuite-tu-expliques-très-simplement-le-contexte">Ensuite, tu expliques très simplement le contexte</h3>
+<p>Dans un speedrun, deux éléments importants sont souvent obtenus aléatoirement :</p>
+<ul>
+<li>les <strong>blaze rods</strong>, récupérées sur des blazes</li>
+<li>les <strong>ender pearls</strong>, obtenues par échange avec des piglins dans certaines versions du jeu</li>
+</ul>
+<h3 id="problématique-annoncée">Problématique annoncée</h3>
+<blockquote>
+<p>“Je vais donc montrer comment on peut modéliser ces événements avec les probabilités, puis comment ces calculs permettent d’évaluer si une performance est crédible ou non.”</p>
+</blockquote>
+<h3 id="annonce-du-plan">Annonce du plan</h3>
+<ul>
+<li><strong>I.</strong> Modéliser le hasard dans Minecraft</li>
+<li><strong>II.</strong> Mesurer si une performance est seulement chanceuse ou statistiquement anormale</li>
+<li><strong>III.</strong> Montrer les limites de ce raisonnement</li>
+</ul>
+<hr>
+<h1 id="i-100--330">I. 1:00 – 3:30</h1>
+<h1 id="modéliser-le-hasard-dans-minecraft">Modéliser le hasard dans Minecraft</h1>
+<h2 id="1-chaque-drop-peut-être-vu-comme-une-expérience-aléatoire-simple">1. Chaque drop peut être vu comme une expérience aléatoire simple</h2>
+<h3 id="idée-à-défendre">Idée à défendre</h3>
+<p>Le hasard du jeu n’est pas “magique” : il peut être transformé en modèle mathématique.</p>
+<h3 id="exemple-1--blaze-rods">Exemple 1 : blaze rods</h3>
+<p>Quand on tue un blaze, il y a une certaine probabilité d’obtenir une blaze rod.<br>
+On peut modéliser cela par une <strong>épreuve de Bernoulli</strong> :</p>
+<ul>
+<li>succès = “j’obtiens une blaze rod”</li>
+<li>échec = “je n’en obtiens pas”</li>
+</ul>
+<p>Si la probabilité vaut <span><span><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>0,5</mn></mrow><annotation encoding="application/x-tex">p = 0{,}5</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.625em; vertical-align: -0.1944em;"></span><span>p</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.8389em; vertical-align: -0.1944em;"></span><span>0</span><span><span>,</span></span><span>5</span></span></span></span> alors chaque kill est une expérience simple à deux issues.</p>
+<h3 id="exemple-2--échanges-avec-les-piglins">Exemple 2 : échanges avec les piglins</h3>
+<p>Même idée :</p>
+<ul>
+<li>succès = “l’échange donne des ender pearls”</li>
+<li>échec = “il n’en donne pas”</li>
+</ul>
+<p>Dans une version donnée du jeu, on peut prendre une probabilité fixe, par exemple environ <strong>4,7 %</strong>.</p>
+<hr>
+<h2 id="2-quand-on-répète-lexpérience-on-obtient-une-loi-binomiale">2. Quand on répète l’expérience, on obtient une loi binomiale</h2>
+<h3 id="idée-à-défendre-1">Idée à défendre</h3>
+<p>Comme on répète plusieurs fois la même expérience, avec la même probabilité, on peut utiliser la <strong>loi binomiale</strong>.</p>
+<p>Si on note :</p>
+<ul>
+<li><span><span><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mtext>nombre&nbsp;de&nbsp;blaze&nbsp;rods&nbsp;obtenues&nbsp;en&nbsp;</mtext><mi>n</mi><mtext>&nbsp;kills</mtext></mrow><annotation encoding="application/x-tex">X = \text{nombre de blaze rods obtenues en   } n \text{   kills}</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.6833em;"></span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.6944em;"></span><span><span>nombre&nbsp;de&nbsp;blaze&nbsp;rods&nbsp;obtenues&nbsp;en&nbsp;</span></span><span>n</span><span><span>&nbsp;kills</span></span></span></span></span></li>
+<li><span><span><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>=</mo><mrow><mtext>nombre&nbsp;d’</mtext><mover accent="true"><mtext>e</mtext><mo>ˊ</mo></mover><mtext>changes&nbsp;donnant&nbsp;des&nbsp;perles&nbsp;en&nbsp;</mtext></mrow><mi>m</mi><mrow><mtext>&nbsp;</mtext><mover accent="true"><mtext>e</mtext><mo>ˊ</mo></mover><mtext>changes</mtext></mrow></mrow><annotation encoding="application/x-tex">Y = \text{nombre d’échanges donnant des perles en } m \text{ échanges}</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.6833em;"></span><span style="margin-right: 0.22222em;">Y</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.8889em; vertical-align: -0.1944em;"></span><span><span>nombre&nbsp;d’</span><span><span><span><span style="height: 0.6944em;"><span style="top: -3em;"><span style="height: 3em;"></span><span>e</span></span><span style="top: -3em;"><span style="height: 3em;"></span><span style="left: -0.25em;"><span>ˊ</span></span></span></span></span></span></span><span>changes&nbsp;donnant&nbsp;des&nbsp;perles&nbsp;en&nbsp;</span></span><span>m</span><span><span>&nbsp;</span><span><span><span><span style="height: 0.6944em;"><span style="top: -3em;"><span style="height: 3em;"></span><span>e</span></span><span style="top: -3em;"><span style="height: 3em;"></span><span style="left: -0.25em;"><span>ˊ</span></span></span></span></span></span></span><span>changes</span></span></span></span></span></li>
+</ul>
+<p>alors :</p>
+<ul>
+<li><span><span><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>∼</mo><mi mathvariant="script">B</mi><mo stretchy="false">(</mo><mi>n</mi><mo separator="true">,</mo><mn>0,5</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X \sim \mathcal{B}(n,0{,}5)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.6833em;"></span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>∼</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.03041em;">B</span><span>(</span><span>n</span><span>,</span><span style="margin-right: 0.1667em;"></span><span>0</span><span><span>,</span></span><span>5</span><span>)</span></span></span></span></li>
+<li><span><span><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>∼</mo><mi mathvariant="script">B</mi><mo stretchy="false">(</mo><mi>m</mi><mo separator="true">,</mo><mn>0,047</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Y \sim \mathcal{B}(m,0{,}047)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.6833em;"></span><span style="margin-right: 0.22222em;">Y</span><span style="margin-right: 0.2778em;"></span><span>∼</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.03041em;">B</span><span>(</span><span>m</span><span>,</span><span style="margin-right: 0.1667em;"></span><span>0</span><span><span>,</span></span><span>047</span><span>)</span></span></span></span></li>
+</ul>
+<h3 id="ce-que-ça-montre">Ce que ça montre</h3>
+<p>Les probabilités permettent donc de prévoir non pas un résultat exact, mais <strong>ce qui est normal en moyenne</strong>.</p>
+<hr>
+<h2 id="3-lespérance-donne-une-référence-normale">3. L’espérance donne une référence “normale”</h2>
+<h3 id="formule">Formule</h3>
+<p>Pour une loi binomiale, l’espérance vaut :</p>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>E</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><mi>n</mi><mi>p</mi></mrow><annotation encoding="application/x-tex">E(X)=np</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.05764em;">E</span><span>(</span><span style="margin-right: 0.07847em;">X</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.625em; vertical-align: -0.1944em;"></span><span>n</span><span>p</span></span></span></span></span>
+<h3 id="applications">Applications</h3>
+<ul>
+<li>sur <strong>20 blazes</strong>, on attend en moyenne :</li>
+</ul>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>20</mn><mo>×</mo><mn>0,5</mn><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">20 \times 0{,}5 = 10</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.7278em; vertical-align: -0.0833em;"></span><span>20</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 0.8389em; vertical-align: -0.1944em;"></span><span>0</span><span><span>,</span></span><span>5</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.6444em;"></span><span>10</span></span></span></span></span>
+<p>donc <strong>environ 10 rods</strong></p>
+<ul>
+<li>sur <strong>40 échanges piglin</strong>, on attend :</li>
+</ul>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>40</mn><mo>×</mo><mn>0,047</mn><mo>≈</mo><mn>1,88</mn></mrow><annotation encoding="application/x-tex">40 \times 0{,}047 \approx 1{,}88</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.7278em; vertical-align: -0.0833em;"></span><span>40</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 0.8389em; vertical-align: -0.1944em;"></span><span>0</span><span><span>,</span></span><span>047</span><span style="margin-right: 0.2778em;"></span><span>≈</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.8389em; vertical-align: -0.1944em;"></span><span>1</span><span><span>,</span></span><span>88</span></span></span></span></span>
+<p>donc <strong>environ 2 échanges favorables</strong></p>
+<h3 id="argument-important">Argument important</h3>
+<p>Une performance n’est pas suspecte parce qu’elle dépasse un peu la moyenne.<br>
+Elle devient suspecte quand elle s’en éloigne <strong>énormément</strong>.</p>
+<h3 id="transition">Transition</h3>
+<blockquote>
+<p>“Avoir une moyenne, c’est utile, mais cela ne suffit pas. Il faut maintenant mesurer la probabilité d’obtenir des résultats beaucoup plus favorables que prévu.”</p>
+</blockquote>
+<hr>
+<h1 id="ii-330--745">II. 3:30 – 7:45</h1>
+<h1 id="quand-une-performance-devient-elle-statistiquement-suspecte-">Quand une performance devient-elle statistiquement suspecte ?</h1>
+<p>C’est la partie la plus importante de ton oral.</p>
+<hr>
+<h2 id="1-premier-exemple--les-blaze-rods">1. Premier exemple : les blaze rods</h2>
+<p>Imaginons qu’un joueur tue <strong>20 blazes</strong> et obtienne <strong>18 rods</strong>.</p>
+<p>On modélise par :</p>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>X</mi><mo>∼</mo><mi mathvariant="script">B</mi><mo stretchy="false">(</mo><mn>20</mn><mo separator="true">,</mo><mn>0,5</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X \sim \mathcal{B}(20,0{,}5)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.6833em;"></span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>∼</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.03041em;">B</span><span>(</span><span>20</span><span>,</span><span style="margin-right: 0.1667em;"></span><span>0</span><span><span>,</span></span><span>5</span><span>)</span></span></span></span></span>
+<p>On veut calculer :</p>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>≥</mo><mn>18</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(X \ge 18)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span style="">(</span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>≥</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="">18</span><span>)</span></span></span></span></span>
+<h3 id="calcul">Calcul</h3>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>≥</mo><mn>18</mn><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mn>18</mn><mo stretchy="false">)</mo><mo>+</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mn>19</mn><mo stretchy="false">)</mo><mo>+</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mn>20</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(X \ge 18)=P(X=18)+P(X=19)+P(X=20)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span style="">≥</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span>18</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span>18</span><span>)</span><span style="margin-right: 0.2222em;"></span><span>+</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span>19</span><span>)</span><span style="margin-right: 0.2222em;"></span><span>+</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span>20</span><span>)</span></span></span></span></span>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo>=</mo><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mn>20</mn><mn>18</mn></mfrac><mo fence="true">)</mo></mrow><mo stretchy="false">(</mo><mn>0,5</mn><msup><mo stretchy="false">)</mo><mn>20</mn></msup><mo>+</mo><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mn>20</mn><mn>19</mn></mfrac><mo fence="true">)</mo></mrow><mo stretchy="false">(</mo><mn>0,5</mn><msup><mo stretchy="false">)</mo><mn>20</mn></msup><mo>+</mo><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mn>20</mn><mn>20</mn></mfrac><mo fence="true">)</mo></mrow><mo stretchy="false">(</mo><mn>0,5</mn><msup><mo stretchy="false">)</mo><mn>20</mn></msup></mrow><annotation encoding="application/x-tex">= \binom{20}{18}(0{,}5)^{20}+\binom{20}{19}(0{,}5)^{20}+\binom{20}{20}(0{,}5)^{20}</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.3669em;"></span><span style="">=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 2.4em; vertical-align: -0.95em;"></span><span style=""><span style="top: 0em;"><span>(</span></span><span><span><span><span style="height: 1.3214em;"><span style="top: -2.314em;"><span style="height: 3em;"></span><span><span>18</span></span></span><span style="top: -3.677em;"><span style="height: 3em;"></span><span><span>20</span></span></span></span><span>​</span></span><span><span style="height: 0.686em;"><span></span></span></span></span></span><span style="top: 0em;"><span>)</span></span></span><span>(</span><span style="">0</span><span><span>,</span></span><span style="">5</span><span><span>)</span><span><span><span><span style="height: 0.8641em;"><span style="top: -3.113em; margin-right: 0.05em;"><span style="height: 2.7em;"></span><span><span><span>20</span></span></span></span></span></span></span></span></span><span style="margin-right: 0.2222em;"></span><span>+</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 2.4em; vertical-align: -0.95em;"></span><span style=""><span style="top: 0em;"><span>(</span></span><span><span><span><span style="height: 1.3214em;"><span style="top: -2.314em;"><span style="height: 3em;"></span><span><span>19</span></span></span><span style="top: -3.677em;"><span style="height: 3em;"></span><span><span>20</span></span></span></span><span>​</span></span><span><span style="height: 0.686em;"><span></span></span></span></span></span><span style="top: 0em;"><span>)</span></span></span><span>(</span><span>0</span><span><span>,</span></span><span style="">5</span><span><span>)</span><span><span><span><span style="height: 0.8641em;"><span style="top: -3.113em; margin-right: 0.05em;"><span style="height: 2.7em;"></span><span><span><span>20</span></span></span></span></span></span></span></span></span><span style="margin-right: 0.2222em;"></span><span>+</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 2.4em; vertical-align: -0.95em;"></span><span style=""><span style="top: 0em;"><span>(</span></span><span><span><span><span style="height: 1.3214em;"><span style="top: -2.314em;"><span style="height: 3em;"></span><span><span>20</span></span></span><span style="top: -3.677em;"><span style="height: 3em;"></span><span><span>20</span></span></span></span><span>​</span></span><span><span style="height: 0.686em;"><span></span></span></span></span></span><span style="top: 0em;"><span>)</span></span></span><span>(</span><span style="">0</span><span><span>,</span></span><span>5</span><span><span>)</span><span><span><span><span style="height: 0.8641em;"><span style="top: -3.113em; margin-right: 0.05em;"><span style="height: 2.7em;"></span><span><span><span>20</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mo>=</mo><mfrac><mrow><mn>190</mn><mo>+</mo><mn>20</mn><mo>+</mo><mn>1</mn></mrow><msup><mn>2</mn><mn>20</mn></msup></mfrac><mo>=</mo><mfrac><mn>211</mn><mrow><mn>1</mn><mtext> </mtext><mn>048</mn><mtext> </mtext><mn>576</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">= \frac{190+20+1}{2^{20}}=\frac{211}{1\,048\,576}</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.3669em;"></span><span style="">=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 2.0074em; vertical-align: -0.686em;"></span><span><span></span><span><span><span><span style="height: 1.3214em;"><span style="top: -2.314em;"><span style="height: 3em;"></span><span><span><span>2</span><span><span><span><span style="height: 0.7401em;"><span style="top: -2.989em; margin-right: 0.05em;"><span style="height: 2.7em;"></span><span><span><span>20</span></span></span></span></span></span></span></span></span></span></span><span style="top: -3.23em;"><span style="height: 3em;"></span><span style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.677em;"><span style="height: 3em;"></span><span><span>190</span><span style="margin-right: 0.2222em;"></span><span>+</span><span style="margin-right: 0.2222em;"></span><span>20</span><span style="margin-right: 0.2222em;"></span><span>+</span><span style="margin-right: 0.2222em;"></span><span>1</span></span></span></span><span>​</span></span><span><span style="height: 0.686em;"><span></span></span></span></span></span><span></span></span><span style="margin-right: 0.2778em;"></span><span style="">=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 2.0074em; vertical-align: -0.686em;"></span><span><span></span><span><span><span><span style="height: 1.3214em;"><span style="top: -2.314em;"><span style="height: 3em;"></span><span><span>1</span><span style="margin-right: 0.1667em;"></span><span>048</span><span style="margin-right: 0.1667em;"></span><span>576</span></span></span><span style="top: -3.23em;"><span style="height: 3em;"></span><span style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.677em;"><span style="height: 3em;"></span><span><span>211</span></span></span></span><span>​</span></span><span><span style="height: 0.686em;"><span></span></span></span></span></span><span></span></span></span></span></span></span>
+<p>Soit environ :</p>
+<span><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>0,000201</mn></mrow><annotation encoding="application/x-tex">0{,}000201</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.8389em; vertical-align: -0.1944em;"></span><span>0</span><span><span>,</span></span><span>000201</span></span></span></span></span>
+<p>c’est-à-dire :</p>
+<span><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>0,020</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">0{,}020\%</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.9444em; vertical-align: -0.1944em;"></span><span>0</span><span><span>,</span></span><span>020%</span></span></span></span></span>
+<h3 id="interprétation">Interprétation</h3>
+<p>Cela représente environ <strong>1 chance sur 5 000</strong>.</p>
+<h3 id="argument">Argument</h3>
+<p>C’est <strong>très rare</strong>, mais pas impossible.<br>
+Donc <strong>un seul événement exceptionnel ne suffit pas forcément à crier à la triche</strong>.</p>
+<p>C’est un argument important, parce qu’il montre que tu es nuancé.</p>
+<hr>
+<h2 id="2-deuxième-exemple--les-échanges-avec-les-piglins">2. Deuxième exemple : les échanges avec les piglins</h2>
+<p>Imaginons maintenant qu’un joueur fasse <strong>40 échanges</strong> et obtienne <strong>10 fois des ender pearls</strong>.</p>
+<p>On modélise par :</p>
+<span><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>Y</mi><mo>∼</mo><mi mathvariant="script">B</mi><mo stretchy="false">(</mo><mn>40</mn><mo separator="true">,</mo><mn>0,047</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Y \sim \mathcal{B}(40,0{,}047)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.6833em;"></span><span style="margin-right: 0.22222em;">Y</span><span style="margin-right: 0.2778em;"></span><span>∼</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.03041em;">B</span><span>(</span><span>40</span><span>,</span><span style="margin-right: 0.1667em;"></span><span>0</span><span><span>,</span></span><span>047</span><span>)</span></span></span></span></span>
+<p>Or l’espérance vaut seulement :</p>
+<span><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>E</mi><mo stretchy="false">(</mo><mi>Y</mi><mo stretchy="false">)</mo><mo>=</mo><mn>40</mn><mo>×</mo><mn>0,047</mn><mo>=</mo><mn>1,88</mn></mrow><annotation encoding="application/x-tex">E(Y)=40 \times 0{,}047 = 1{,}88</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.05764em;">E</span><span>(</span><span style="margin-right: 0.22222em;">Y</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.7278em; vertical-align: -0.0833em;"></span><span>40</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 0.8389em; vertical-align: -0.1944em;"></span><span>0</span><span><span>,</span></span><span>047</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.8389em; vertical-align: -0.1944em;"></span><span>1</span><span><span>,</span></span><span>88</span></span></span></span></span>
+<p>Donc obtenir <strong>10 succès</strong>, c’est très au-dessus de ce qu’on attend.</p>
+<h3 id="probabilité">Probabilité</h3>
+<p>Avec un tableur ou un logiciel, on trouve :</p>
+<span><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>Y</mi><mo>≥</mo><mn>10</mn><mo stretchy="false">)</mo><mo>≈</mo><mn>3</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>5</mn></mrow></msup></mrow><annotation encoding="application/x-tex">P(Y \ge 10) \approx 3 \times 10^{-5}</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.22222em;">Y</span><span style="margin-right: 0.2778em;"></span><span>≥</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span>10</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>≈</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.7278em; vertical-align: -0.0833em;"></span><span>3</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 0.8641em;"></span><span>1</span><span><span>0</span><span><span><span><span style="height: 0.8641em;"><span style="top: -3.113em; margin-right: 0.05em;"><span style="height: 2.7em;"></span><span><span><span>−</span><span>5</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<p>soit environ :</p>
+<ul>
+<li><strong>0,003 %</strong></li>
+<li>environ <strong>1 chance sur 33 000</strong></li>
+</ul>
+<h3 id="interprétation-1">Interprétation</h3>
+<p>Là encore, ce n’est pas impossible.<br>
+Mais c’est déjà <strong>extrêmement improbable</strong>.</p>
+<hr>
+<h2 id="3-le-point-décisif--combiner-plusieurs-événements-rares">3. Le point décisif : combiner plusieurs événements rares</h2>
+<h3 id="idée-centrale">Idée centrale</h3>
+<p>Ce qui rend une performance vraiment suspecte, ce n’est pas forcément <strong>un seul coup de chance</strong>, mais <strong>l’accumulation de plusieurs coups de chance indépendants</strong>.</p>
+<p>Si les deux événements sont indépendants, alors :</p>
+<span><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>∩</mo><mi>B</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo><mo>×</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(A \cap B)=P(A)\times P(B)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span>A</span><span style="margin-right: 0.2222em;"></span><span>∩</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.05017em;">B</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span>A</span><span>)</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.05017em;">B</span><span>)</span></span></span></span></span>
+<p>Ici :</p>
+<h2 id="pour-les-blaze-rods">Pour les blaze rods</h2>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo><mo>≈</mo><mn>2</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>4</mn></mrow></msup></mrow><annotation encoding="application/x-tex">P(A) \approx 2 \times 10^{-4} </annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span>A</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>≈</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.7278em; vertical-align: -0.0833em;"></span><span>2</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 0.8641em;"></span><span>1</span><span><span>0</span><span><span><span><span style="height: 0.8641em;"><span style="top: -3.113em; margin-right: 0.05em;"><span style="height: 2.7em;"></span><span><span><span>−</span><span>4</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<h2 id="pour-les-piglin">Pour les piglin</h2>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo><mo>≈</mo><mn>3</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>5</mn></mrow></msup></mrow><annotation encoding="application/x-tex">P(B) \approx 3 \times 10^{-5} </annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.05017em;">B</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>≈</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.7278em; vertical-align: -0.0833em;"></span><span>3</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 0.8641em;"></span><span>1</span><span><span>0</span><span><span><span><span style="height: 0.8641em;"><span style="top: -3.113em; margin-right: 0.05em;"><span style="height: 2.7em;"></span><span><span><span>−</span><span>5</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<p>Donc :</p>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>∩</mo><mi>B</mi><mo stretchy="false">)</mo><mo>≈</mo><mn>6</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>9</mn></mrow></msup></mrow><annotation encoding="application/x-tex">P(A \cap B) \approx 6 \times 10^{-9}</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span>A</span><span style="margin-right: 0.2222em;"></span><span>∩</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.05017em;">B</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>≈</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.7278em; vertical-align: -0.0833em;"></span><span>6</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 0.8641em;"></span><span>1</span><span><span>0</span><span><span><span><span style="height: 0.8641em;"><span style="top: -3.113em; margin-right: 0.05em;"><span style="height: 2.7em;"></span><span><span><span>−</span><span>9</span></span></span></span></span></span></span></span></span></span></span></span></span>
+<p>Soit environ :</p>
+<ul>
+<li><strong>0,0000006 %</strong></li>
+<li><strong>1 chance sur 170 millions</strong> environ</li>
+</ul>
+<h3 id="interprétation-forte">Interprétation forte</h3>
+<p>À ce niveau-là, l’explication “il a juste eu de la chance” devient <strong>très peu crédible</strong>.</p>
+<h3 id="formulation-intelligente-à-dire-au-jury">Formulation intelligente à dire au jury</h3>
+<blockquote>
+<p>“Les mathématiques ne disent pas qu’un événement rare est impossible. Elles permettent en revanche d’évaluer si l’hypothèse du simple hasard reste raisonnable.”</p>
+</blockquote>
+<p>C’est une phrase excellente pour un Grand Oral.</p>
+<hr>
+<h2 id="4-ce-que-cela-montre-vraiment">4. Ce que cela montre vraiment</h2>
+<h3 id="argument-final-de-la-partie-ii">Argument final de la partie II</h3>
+<p>Les probabilités servent ici à <strong>mesurer la plausibilité</strong>.</p>
+<p>Elles permettent de passer :</p>
+<ul>
+<li>d’une intuition vague : “il est trop chanceux”</li>
+<li>à une conclusion argumentée :
+<strong>“statistiquement, une telle série est extraordinairement improbable.”</strong></li>
+</ul>
+<h3 id="transition-1">Transition</h3>
+<blockquote>
+<p>“Mais il faut rester prudent : un modèle mathématique n’est jamais parfait. Il faut donc examiner ses limites.”</p>
+</blockquote>
+<hr>
+<h1 id="iii-745--915">III. 7:45 – 9:15</h1>
+<h1 id="ce-que-les-maths-prouvent-et-ce-quelles-ne-prouvent-pas">Ce que les maths prouvent… et ce qu’elles ne prouvent pas</h1>
+<hr>
+<h2 id="1-le-modèle-dépend-des-hypothèses">1. Le modèle dépend des hypothèses</h2>
+<h3 id="tu-expliques">Tu expliques</h3>
+<p>Pour que le raisonnement soit valable, il faut connaître :</p>
+<ul>
+<li>la <strong>version exacte</strong> de Minecraft</li>
+<li>les <strong>vraies probabilités</strong> des drops</li>
+<li>le <strong>nombre exact d’essais</strong></li>
+</ul>
+<p>Si une probabilité change selon la version, le calcul change aussi.</p>
+<hr>
+<h2 id="2-une-probabilité-faible-nest-pas-une-impossibilité">2. Une probabilité faible n’est pas une impossibilité</h2>
+<h3 id="argument-important-1">Argument important</h3>
+<p>Un événement très improbable peut tout de même arriver.</p>
+<p>Donc les maths ne disent pas :</p>
+<ul>
+<li>“c’est impossible”</li>
+<li>ni même “la triche est prouvée”</li>
+</ul>
+<p>Elles disent plutôt :</p>
+<ul>
+<li>“si le jeu est normal, ce résultat est très peu plausible”</li>
+</ul>
+<hr>
+<h2 id="3-attention-au-biais-de-sélection">3. Attention au biais de sélection</h2>
+<p>C’est un très bon point pour impressionner le jury.</p>
+<h3 id="tu-peux-dire">Tu peux dire</h3>
+<p>Si un joueur tente des centaines de runs, on ne regarde souvent que <strong>la meilleure</strong>.<br>
+Donc on a tendance à surestimer le caractère exceptionnel d’un résultat.</p>
+<h3 id="pourquoi-cest-intéressant">Pourquoi c’est intéressant</h3>
+<p>Cela montre que tu as du recul critique sur les statistiques.</p>
+<hr>
+<h2 id="4-conclusion-de-la-partie-iii">4. Conclusion de la partie III</h2>
+<blockquote>
+<p>“Les probabilités sont donc un outil puissant pour repérer des anomalies, mais elles doivent toujours être interprétées avec prudence.”</p>
+</blockquote>
+<hr>
+<h1 id="915--1000">9:15 – 10:00</h1>
+<h1 id="conclusion">Conclusion</h1>
+<p>Tu peux conclure presque mot pour mot comme ça :</p>
+<blockquote>
+<p>“Pour conclure, un speedrun de Minecraft devient mathématiquement suspect lorsque les résultats obtenus s’éloignent tellement des valeurs attendues que leur probabilité devient infime, surtout si plusieurs événements rares s’enchaînent de manière indépendante. Les probabilités ne prouvent pas à elles seules une triche, mais elles permettent de montrer que l’explication par le simple hasard peut devenir statistiquement invraisemblable.”</p>
+</blockquote>
+<h3 id="ouverture">Ouverture</h3>
+<blockquote>
+<p>“Au fond, ce raisonnement dépasse Minecraft : on retrouve les mêmes outils en détection de fraude, en médecine, en contrôle antidopage ou encore en cybersécurité.”</p>
+</blockquote>
+<hr>
+<h1 id="ce-que-tu-peux-écrire-au-tableau">Ce que tu peux écrire au tableau</h1>
+<p>Si tu as le droit d’écrire, note seulement 3 choses :</p>
+<span><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>X</mi><mo>∼</mo><mi mathvariant="script">B</mi><mo stretchy="false">(</mo><mi>n</mi><mo separator="true">,</mo><mi>p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">X \sim \mathcal{B}(n,p)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 0.6833em;"></span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>∼</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.03041em;">B</span><span>(</span><span>n</span><span>,</span><span style="margin-right: 0.1667em;"></span><span>p</span><span>)</span></span></span></span></span>
+<span><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>E</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><mi>n</mi><mi>p</mi></mrow><annotation encoding="application/x-tex">E(X)=np</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.05764em;">E</span><span>(</span><span style="margin-right: 0.07847em;">X</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 0.625em; vertical-align: -0.1944em;"></span><span>n</span><span>p</span></span></span></span></span>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>∩</mo><mi>B</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo><mo>×</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(A \cap B)=P(A)\times P(B)</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="">A</span><span style="margin-right: 0.2222em;"></span><span>∩</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.05017em;">B</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span>A</span><span>)</span><span style="margin-right: 0.2222em;"></span><span>×</span><span style="margin-right: 0.2222em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.05017em;">B</span><span>)</span></span></span></span></span>
+<p>Et éventuellement :</p>
+<span style=""><span><span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>≥</mo><mn>18</mn><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>211</mn><mrow><mn>1</mn><mtext> </mtext><mn>048</mn><mtext> </mtext><mn>576</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">P(X \ge 18)=\frac{211}{1\,048\,576}</annotation></semantics></math></span><span aria-hidden="true"><span><span style="height: 1em; vertical-align: -0.25em;"></span><span style="margin-right: 0.13889em;">P</span><span>(</span><span style="margin-right: 0.07847em;">X</span><span style="margin-right: 0.2778em;"></span><span>≥</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 1em; vertical-align: -0.25em;"></span><span>18</span><span>)</span><span style="margin-right: 0.2778em;"></span><span>=</span><span style="margin-right: 0.2778em;"></span></span><span><span style="height: 2.0074em; vertical-align: -0.686em;"></span><span><span></span><span><span><span><span style="height: 1.3214em;"><span style="top: -2.314em;"><span style="height: 3em;"></span><span><span>1</span><span style="margin-right: 0.1667em;"></span><span>048</span><span style="margin-right: 0.1667em;"></span><span>576</span></span></span><span style="top: -3.23em;"><span style="height: 3em;"></span><span style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.677em;"><span style="height: 3em;"></span><span><span>211</span></span></span></span><span>​</span></span><span><span style="height: 0.686em;"><span></span></span></span></span></span><span></span></span></span></span></span></span>
+<p>C’est propre, simple, efficace.</p>
+<hr>
+<h1 id="les-arguments-forts-à-faire-entendre-au-jury">Les arguments forts à faire entendre au jury</h1>
+<p>Voici les <strong>idées de fond</strong> qu’il faut absolument faire passer :</p>
+<ol>
+<li><strong>Le hasard d’un jeu peut être modélisé mathématiquement.</strong></li>
+<li><strong>La loi binomiale permet de prévoir ce qui est normal ou exceptionnel.</strong></li>
+<li><strong>Un événement rare n’est pas une preuve.</strong></li>
+<li><strong>Plusieurs événements rares indépendants deviennent très suspects ensemble.</strong></li>
+<li><strong>Les maths mesurent la crédibilité d’une explication, pas l’intention d’une personne.</strong></li>
+</ol>
+<hr>
+<h1 id="bonus-originalité">Bonus originalité</h1>
+<p>Tu peux glisser en une phrase :</p>
+<blockquote>
+<p>“Ce sujet fait écho à une vraie controverse dans la communauté Minecraft, où des mathématiciens ont justement été mobilisés pour évaluer si certains résultats de speedrun étaient crédibles.”</p>
+</blockquote>
+<p>Ça donne de la profondeur sans te perdre dans le drama.</p>
+<hr>
+<h1 id="si-tu-veux-vraiment-maximiser-la-note">Si tu veux vraiment maximiser la note</h1>
+<p>Tu peux ajouter une mini touche perso :</p>
+<ul>
+<li>“J’ai choisi ce sujet parce que Minecraft est un jeu qui paraît simple, mais il cache de vraies mécaniques probabilistes.”</li>
+<li>ou :</li>
+<li>“En tant que joueur, je trouvais intéressant de voir à quel moment une intuition de ‘chance énorme’ peut devenir un vrai raisonnement mathématique.”</li>
+</ul>
+<hr>
+<p>Si tu veux, je peux maintenant te faire l’un des 3 compléments suivants :</p>
+<ol>
+<li><strong>la version rédigée complète des 10 minutes</strong>, prête à apprendre</li>
+<li><strong>une fiche ultra courte avec seulement les idées à retenir</strong></li>
+<li><strong>une liste de questions possibles du jury avec les réponses</strong></li>
+</ol>
